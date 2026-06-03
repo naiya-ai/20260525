@@ -1,0 +1,59 @@
+seed: 50
+device: cuda
+output_dir: outputs/ddpm_mlp_4x
+
+data:
+  dataset_root: datasets/preprocessed/gaussian_quantile
+  dataset_name: harmonized_knhanes_1998_2024
+  require_complete_target: false
+  source_groups:
+    - questionnaire_without_disease
+    - dietary
+  target_group: all_disease_indicators
+
+model:
+  type: mlp
+
+  source_encoder:
+    type: eddi
+    embedding_dim: 128
+    hidden_layers:
+      - 1024
+      - 1024
+    output_dim: 256
+    aggregation: sum
+
+  time_embedding_dim: 128
+  hidden_layers:
+    - 2048
+    - 2048
+    - 1024
+    - 1024
+  dropout: 0.1
+  activation: relu
+  batch_norm: true
+
+diffusion:
+  num_timesteps: 100
+  scheduler: cosine
+  gaussian_loss_type: mse
+  gaussian_parametrization: eps
+  multinomial_loss_type: vb_stochastic
+  categorical_parametrization: x0
+
+train:
+  batch_size: 4096
+  steps: 2000
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  gradient_clip_norm: 1.0
+  source_feature_dropout: 0.1
+  gradient_accumulation_steps: 1
+  num_workers: 0
+  mixed_precision: false
+
+logging:
+  log_every: 10
+  validate_every: 100
+  checkpoint_every: 1000
+  save_best: true

@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+BETAS="${BETAS:-0.1}"
+DISEASES="${DISEASES:-diabetes hypertension dyslipidemia liver_disease kidney_disease anemia}"
+REPEATS="${REPEATS:-5}"
+GPUS="${GPUS:-0 1 2 3 4 5 6 7}"
+CONFIG="${CONFIG:-configs/train/train_conditional_vae_mlp_source_z16_beta010_8x.yaml}"
+DATASET_NAME="${DATASET_NAME:-harmonized_knhanes_1998_2024_plus_nhanes_1988_2023}"
+DATASET_ROOT="${DATASET_ROOT:-datasets/preprocessed/gaussian_quantile}"
+BASE_SEED="${BASE_SEED:-20270526}"
+BATCH_SIZE="${BATCH_SIZE:-1024}"
+STEPS="${STEPS:-2000}"
+LEARNING_RATE="${LEARNING_RATE:-0.001}"
+BETA_WARMUP_STEPS="${BETA_WARMUP_STEPS:-1000}"
+NUM_WORKERS="${NUM_WORKERS:-0}"
+LOG_EVERY="${LOG_EVERY:-10}"
+VALIDATE_EVERY="${VALIDATE_EVERY:-10}"
+CHECKPOINT_EVERY="${CHECKPOINT_EVERY:-1000}"
+DISABLE_EARLY_STOPPING="${DISABLE_EARLY_STOPPING:-1}"
+SWEEP_ID="${SWEEP_ID:-cvae_mlp_source_z16_beta010_8x_6diseases_maxharm_5x_$(date +%Y%m%d_%H%M%S)}"
+ROOT="${ROOT:-outputs/repeats/${SWEEP_ID}}"
+
+BETAS="${BETAS}" \
+DISEASES="${DISEASES}" \
+REPEATS="${REPEATS}" \
+GPUS="${GPUS}" \
+CONFIG="${CONFIG}" \
+DATASET_NAME="${DATASET_NAME}" \
+DATASET_ROOT="${DATASET_ROOT}" \
+BASE_SEED="${BASE_SEED}" \
+BATCH_SIZE="${BATCH_SIZE}" \
+STEPS="${STEPS}" \
+LEARNING_RATE="${LEARNING_RATE}" \
+BETA_WARMUP_STEPS="${BETA_WARMUP_STEPS}" \
+NUM_WORKERS="${NUM_WORKERS}" \
+LOG_EVERY="${LOG_EVERY}" \
+VALIDATE_EVERY="${VALIDATE_EVERY}" \
+CHECKPOINT_EVERY="${CHECKPOINT_EVERY}" \
+DISABLE_EARLY_STOPPING="${DISABLE_EARLY_STOPPING}" \
+SWEEP_ID="${SWEEP_ID}" \
+ROOT="${ROOT}" \
+./scripts/train/repeat_cvae_beta_selection_all_diseases.sh

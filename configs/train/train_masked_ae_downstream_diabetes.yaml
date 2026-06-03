@@ -1,0 +1,38 @@
+seed: 42
+device: cuda
+output_dir: outputs/masked_ae_downstream/default_diabetes
+
+data:
+  dataset_root: datasets/preprocessed/gaussian_quantile
+  dataset_name: harmonized_knhanes_1998_2024
+  source_groups:
+    - questionnaire_without_disease
+    - dietary
+  target_disease: diabetes
+
+model:
+  pretrained_autoencoder_path: outputs/masked_autoencoder_source/masked_ae_source_4variants_20260527_235405/default/checkpoint_best.pt
+  variant_name: default
+  freeze_backbone: false
+  class_weight: balanced
+  head_hidden_layers:
+    - 256
+    - 256
+  dropout: 0.1
+  activation: relu
+  batch_norm: true
+
+train:
+  batch_size: 4096
+  steps: 1000
+  learning_rate: 0.0005
+  weight_decay: 0.0001
+  gradient_clip_norm: 1.0
+  num_workers: 0
+  mixed_precision: false
+
+logging:
+  log_every: 100
+  validate_every: 100
+  checkpoint_every: 1000
+  save_best: true

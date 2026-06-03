@@ -1,0 +1,41 @@
+seed: 42
+docs_dir: datasets/docs
+mode: variable_groups
+
+harmonized_dataset: datasets/harmonized/harmonized_knhanes_nhanes.csv
+harmonized_views:
+  - name: harmonized_knhanes_2024
+    survey: knhanes
+    year_min: 2024
+    year_max: 2024
+  - name: harmonized_knhanes_2013_2024
+    survey: knhanes
+    year_min: 2013
+    year_max: 2024
+  - name: harmonized_knhanes_1998_2024
+    survey: knhanes
+    year_min: 1998
+    year_max: 2024
+  - name: harmonized_knhanes_1998_2024_plus_nhanes_1988_2023
+    survey:
+      - knhanes
+      - nhanes
+    year_min: 1988
+    year_max: 2024
+output_dir: datasets/preprocessed/gaussian_quantile
+
+variable_groups:
+  - questionnaire_without_disease.txt
+  - dietary.txt
+  - diabetes.txt
+  - hypertension.txt
+  - dyslipidemia.txt
+  - liver_disease.txt
+  - hepatitis_b.txt
+  - hepatitis_c
+  - kidney_disease.txt
+  - anemia
+
+gaussian_quantile:
+  n_quantiles: 1000
+  clip_epsilon: 0.000001

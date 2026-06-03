@@ -1,0 +1,67 @@
+seed: 42
+device: cuda
+output_dir: outputs/conditional_vae_eddi
+
+data:
+  dataset_root: datasets/preprocessed/gaussian_quantile
+  dataset_name: harmonized_knhanes_1998_2024
+  require_complete_target: false
+  source_groups:
+    - questionnaire_without_disease
+    - dietary
+  target_group: diabetes
+
+model:
+  backbone: eddi
+
+  source_encoder:
+    embedding_dim: 256
+    hidden_layers:
+      - 16384 
+      - 16384
+    output_dim: 256
+    aggregation: sum
+    # Optional masked-AE pretraining:
+    # pretrained_path: outputs/masked_autoencoder_source/checkpoint_best.pt
+    # freeze_pretrained: false
+
+  latent_dim: 8
+  encoder_hidden_layers:
+    - 256
+    - 256
+  prior_hidden_layers:
+    - 256
+    - 256
+  decoder_hidden_layers:
+    - 256
+    - 256
+  dropout: 0.0
+  activation: relu
+  batch_norm: false
+
+  # Missingness correction:
+  # - source_*_mask controls which source features enter the EDDI condition.
+  # - target_*_mask controls target context and reconstruction loss.
+  # - missing targets are excluded from numerical MSE and categorical CE.
+  # This is multiplicative factor (1): target feature observed mask.
+
+train:
+  batch_size: 1024
+  steps: 2000
+  learning_rate: 0.0001
+  weight_decay: 0.00001
+  beta: 0.01
+  gradient_clip_norm: 1.0
+  num_workers: 0
+  mixed_precision: false
+  masked_target_dropout: 0.0
+  early_stopping:
+    enabled: true
+    patience_fraction: 0.1
+    min_delta: 0.0
+
+logging:
+  log_every: 1
+  validate_every: 1
+  checkpoint_every: 1000
+  save_best: true

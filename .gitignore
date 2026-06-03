@@ -1,0 +1,30 @@
+# Local environments
+/.venv/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Data, generated outputs, and experiment artifacts
+/datasets/
+/figures/
+/logs/
+/model_experiment/
+/outputs/
+
+# Runtime logs and process markers
+*.log
+*.pid
+*.session
+*_latest_run.txt
+
+# Large model/data artifacts
+*.pt
+*.pth
+*.ckpt
+*.npy
+*.npz
+*.egg-info/
+
+# Local scratch artifacts
+=0.5.7

@@ -1,0 +1,41 @@
+seed: 42
+device: cuda
+output_dir: model_experiment/classification_2024_train25_valid25_test50/models/mlp/width_64/rep_01
+
+data:
+  dataset_root: datasets/preprocessed/gaussian_quantile
+  dataset_name: harmonized_knhanes_2024_train25_valid25_test50
+  source_groups:
+    - questionnaire_without_disease
+    - dietary
+  split_group: questionnaire_without_disease
+  target_disease: diabetes
+
+model:
+  hidden_layers:
+    - 64
+    - 64
+  dropout: 0.0
+  activation: relu
+  batch_norm: false
+  normalization: none
+  class_weight: balanced
+
+train:
+  batch_size: 224
+  steps: 10000
+  learning_rate: 0.0003
+  weight_decay: 0.0
+  gradient_clip_norm: 1.0
+  num_workers: 0
+  mixed_precision: false
+  early_stopping:
+    enabled: false
+    patience_fraction: 0.1
+    min_delta: 0.0
+
+logging:
+  log_every: 50
+  validate_every: 100
+  checkpoint_every: 1000
+  save_best: true

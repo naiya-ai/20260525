@@ -1,0 +1,78 @@
+seed: 48
+device: cuda
+output_dir: outputs/conditional_vae_transformer_d512
+
+data:
+  dataset_root: datasets/preprocessed/gaussian_quantile
+  dataset_name: harmonized_knhanes_1998_2024
+  require_complete_target: false
+  source_groups:
+    - questionnaire_without_disease
+    - dietary
+  target_group: diabetes
+
+model:
+  backbone: transformer
+  prior_mode: separate
+  latent_dim: 2
+  dropout: 0.05
+  activation: gelu
+  batch_norm: false
+
+  # tokenizer builds raw feature/value tokens with embedding_dim.
+  # out_dim is the token_dim/d_model used by encoder/prior/decoder.
+  # embedding_dim == out_dim uses Identity; otherwise a single Linear projection is used.
+  tokenizer:
+    type: eddi
+    embedding_dim: 512
+    out_dim: 512
+
+  encoder:
+    type: transformer
+    n_layers: 6
+    n_heads: 8
+    ff_dim: 2048
+    dropout: 0.05
+    activation: gelu
+    norm_first: true
+
+  prior:
+    type: transformer
+    n_layers: 6
+    n_heads: 8
+    ff_dim: 2048
+    dropout: 0.05
+    activation: gelu
+    norm_first: true
+
+  decoder:
+    type: transformer
+    n_layers: 6
+    n_heads: 8
+    ff_dim: 2048
+    dropout: 0.05
+    activation: gelu
+    norm_first: true
+
+train:
+  batch_size: 4096
+  steps: 2000
+  learning_rate: 0.00001
+  weight_decay: 0.0001
+  beta: 0.01
+  gradient_clip_norm: 1.0
+  num_workers: 0
+  mixed_precision: false
+  masked_target_dropout: 0.0
+  source_mask_dropout: 0.0
+  gradient_accumulation_steps: 1
+  early_stopping:
+    enabled: true
+    patience_fraction: 0.1
+    min_delta: 0.0
+
+logging:
+  log_every: 10
+  validate_every: 10
+  checkpoint_every: 1000
+  save_best: true

@@ -1,0 +1,59 @@
+seed: 42
+device: cuda
+output_dir: outputs/conditional_vae_eddi
+
+data:
+  dataset_root: datasets/preprocessed/gaussian_quantile
+  dataset_name: harmonized_knhanes_1998_2024
+  require_complete_target: false
+  source_groups:
+    - questionnaire_without_disease
+    - dietary
+  target_group: diabetes
+
+model:
+  backbone: eddi
+
+  source_encoder:
+    embedding_dim: 256
+    hidden_layers:
+      - 16384
+      - 16384
+    output_dim: 256
+    aggregation: sum
+
+  latent_dim: 8
+  encoder_hidden_layers:
+    - 256
+    - 256
+  prior_hidden_layers:
+    - 256
+    - 256
+  decoder_hidden_layers:
+    - 256
+    - 256
+  dropout: 0.0
+  activation: relu
+  batch_norm: false
+  normalization: layer_norm
+
+train:
+  batch_size: 1024
+  steps: 2000
+  learning_rate: 0.0001
+  weight_decay: 0.00001
+  beta: 0.001
+  gradient_clip_norm: 1.0
+  num_workers: 0
+  mixed_precision: false
+  masked_target_dropout: 0.0
+  early_stopping:
+    enabled: true
+    patience_fraction: 0.1
+    min_delta: 0.0
+
+logging:
+  log_every: 1
+  validate_every: 1
+  checkpoint_every: 1000
+  save_best: true

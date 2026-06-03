@@ -1,0 +1,70 @@
+seed: 50
+device: cuda
+output_dir: outputs/conditional_vae_mlp_source_z16_beta010_16x
+
+data:
+  dataset_root: datasets/preprocessed/gaussian_quantile
+  dataset_name: harmonized_knhanes_1998_2024
+  require_complete_target: false
+  source_groups:
+    - questionnaire_without_disease
+    - dietary
+  target_group: diabetes
+
+model:
+  backbone: eddi
+
+  source_encoder:
+    type: mlp
+    # Categorical variables are one-hot encoded without a missing category:
+    # raw category id 0 becomes an all-zero vector. Numerical variables are
+    # concatenated with their valid_mask.
+    hidden_layers:
+      - 16384
+      - 16384
+    output_dim: 256
+    dropout: 0.1
+    activation: relu
+    normalization: layer_norm
+
+  latent_dim: 16
+  encoder_hidden_layers:
+    - 512
+    - 512
+    - 256
+    - 256
+  prior_hidden_layers:
+    - 512
+    - 512
+    - 256
+    - 256
+  decoder_hidden_layers:
+    - 512
+    - 512
+    - 256
+    - 256
+  dropout: 0.1
+  activation: relu
+  batch_norm: true
+
+train:
+  batch_size: 1024
+  steps: 2000
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  beta: 0.1
+  beta_warmup_steps: 1000
+  gradient_clip_norm: 1.0
+  num_workers: 0
+  mixed_precision: false
+  masked_target_dropout: 0.0
+  early_stopping:
+    enabled: false
+    patience_fraction: 0.1
+    min_delta: 0.0
+
+logging:
+  log_every: 10
+  validate_every: 10
+  checkpoint_every: 1000
+  save_best: true
